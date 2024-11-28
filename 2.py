@@ -1,13 +1,17 @@
-Вот пример кода на Python с использованием библиотеки `mineflayer`, который создает нескольких ботов для подключения к серверу Minecraft. Однако имейте в виду, что `mineflayer` написан на JavaScript, и для Python можно использовать `mcpi` или `pyminecraft`, но они могут иметь ограничения. 
-
-Тем не менее, вот пример кода с использованием библиотеки `pyminecraft`, которая позволяет подключаться к серверу Minecraft:
-
-```python
+import random
+import string
 from mcpi.minecraft import Minecraft
 import time
+import threading
 
-def create_bot(bot_id, host, port):
-    # Создание подключения к Minecraft
+def generate_random_name(length=16):
+    """Генерирует случайное имя заданной длины."""
+    letters = string.ascii_letters  # Буквы латинского алфавита
+    return ''.join(random.choice(letters) for i in range(length))
+
+def create_bot(host, port):
+    """Создает бота и подключается к серверу Minecraft."""
+    bot_id = generate_random_name()  # Генерация случайного имени
     mc = Minecraft.create(address=host, port=port)
     
     # Приветствие бота
@@ -19,10 +23,10 @@ def create_bot(bot_id, host, port):
 
 # Настройки сервера
 server_host = 'Topper1199191-PwlR.aternos.me'  # Укажите адрес сервера
-server_port =           # Укажите порт сервера
+server_port = 49773          # Укажите порт сервера
 
 # Создание нескольких ботов
 number_of_bots = 100  # Укажите количество ботов
 
-for i in range(number_of_bots):
-    create_bot(i + 1, server_host, server_port)
+for _ in range(number_of_bots):
+    threading.Thread(target=create_bot, args=(server_host, server_port)).start()
