@@ -1,7 +1,8 @@
 import socket
 import random
 import threading
-from scapy.all import*import os
+from scapy.all import *
+import os
 import time
 
 # Get target IP and port from console
